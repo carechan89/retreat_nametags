@@ -1,5 +1,6 @@
-# this is a script file for !gnite name tag.
+# this is a script file for name tags
 # author: Hong Yoon Kim
+# moderation and upkeep: Caressa Chan
 """
 letter: 612, 792
 individual name tag size: 288 x 216
@@ -25,9 +26,12 @@ from reportlab.lib.units import inch
 # To have nothing specific in the code
 # So people can just drag and select and it'll be cool
 
+# TODO Step 1: Register all fonts that you will be using
 pdfmetrics.registerFont(TTFont('Raleway Regular','Raleway-Regular.ttf'))
 pdfmetrics.registerFont(TTFont('Raleway Bold','Raleway-Bold.ttf'))
 
+# TODO Step 2: Change your input filename, choose which tab (sheet) you'll
+# 			   be reading from, and name the important columns
 def ingestXLS(xlsFile):
 	filename = 'nametags.xls'
 	book = open_workbook(filename, formatting_info=True)
@@ -40,30 +44,25 @@ def ingestXLS(xlsFile):
 	data = []
 	# skip the first row cuz it's just labels of what is it
 	for row in range(1,nrows):                       # autoincrement at end
-	   #for col in range(0,ncols): #was 6 previously
-	   #if sheet.cell(row,col).value:
-	   #personName = sheet.cell(row,0).value # name
-	   #livingPlace = sheet.cell(row,2).value # living
-	   #churchSite = sheet.cell(row,1).value # lifegroup
-	   # new info - TODO must change all the variables
-	   personName = sheet.cell(row, 0).value 
+	   personName = sheet.cell(row, 0).value
 	   lifeGroup = sheet.cell(row, 1).value
 	   housing = sheet.cell(row, 2).value
 	   keyHolder = sheet.cell(row, 3).value
 	   smallGroup = sheet.cell(row, 6).value
-                           
+
 	   # finding keyholder
 	   #cell_xf = book.xf_list[sheet.cell_xf_index(row,0)]
 	   #if font[cell_xf.font_index].bold: housing = housing + '.'
 	   if keyHolder == 'x': housing = housing + '*'
 
-	   datum = (personName, lifeGroup, housing, smallGroup) #do i need keyholder or nah
+	   datum = (personName, lifeGroup, housing, smallGroup)
 	   data.append(datum)
 
 	# sort by location (1) then name (0)
 	#data = sorted(data, key=itemgetter(1,0))
 	return data
 
+# TODO Step 3: Choose the font you'll be using for the name
 def getNameFontSize(canvas, name):
 	#generate strings of names that will be on the name tag.
 	fieldWidth = 252
@@ -97,6 +96,8 @@ def getNameFontSize(canvas, name):
 
 	return nameFontSize
 
+# TODO Step 4: Change background image name, choose fonts for all other labels
+#			   Also manually change locations (x and ycoords)of other labels 
 def genSingleNameTag(canvas, datum, xcoord, ycoord):
 	# generate a single name tag
 	# dimensions: 252 x 160
@@ -126,10 +127,10 @@ def genSingleNameTag(canvas, datum, xcoord, ycoord):
  	canvas.setFont('Raleway Regular', 20) #24
 	canvas.setFillColorRGB(0, 0, 0)
 	canvas.drawCentredString(xcoord+126,ycoord+40,lifeGroup) #12, 12
-    
+
 	# print smallGroup
 	# check if they're actually in a small group?
-	canvas.setFont('Raleway Bold', 15) 
+	canvas.setFont('Raleway Bold', 15)
 	canvas.setFillColorRGB(0, 0, 0)
 	canvas.drawString(xcoord+180, ycoord+5,smallGroup)
 
